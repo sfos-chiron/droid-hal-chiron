@@ -13,6 +13,6 @@
   #define WANT_ADRENO_QUIRKS 1 \
 %{nil}
 
-%define makefstab_skip_entries /dev/cpuctl
+%define makefstab_skip_entries /sys/fs/pstore /dev/cpuctl /dev/cpuset
 
 %include rpm/dhd/droid-hal-device.inc
