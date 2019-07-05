@@ -14,4 +14,6 @@
 #define WANT_ADRENO_QUIRKS 1\
 %{nil}
 
+%define makefstab_skip_entries /dev/cpuctl
+
 %include rpm/dhd/droid-hal-device.inc
