@@ -17,7 +17,7 @@
 %define makefstab_skip_entries /dev/cpuctl
 
 %define additional_post_scripts \
-/bin/chmod +x /usr/bin/droid/android-links.sh || :\
+/bin/chmod +x /usr/bin/droid/android-misc.sh || :\
 %{nil}
 
 %include rpm/dhd/droid-hal-device.inc
