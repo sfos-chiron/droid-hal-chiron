@@ -11,10 +11,8 @@
 %define enable_kernel_update 1
 
 %define android_config \
-#define WANT_ADRENO_QUIRKS 1\
+  #define WANT_ADRENO_QUIRKS 1 \
 %{nil}
-
-%define makefstab_skip_entries /dev/cpuctl
 
 %define additional_post_scripts \
 /bin/chmod +x /usr/bin/droid/android-misc.sh || :\
