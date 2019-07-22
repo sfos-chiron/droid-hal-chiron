@@ -14,8 +14,4 @@
   #define WANT_ADRENO_QUIRKS 1 \
 %{nil}
 
-%define additional_post_scripts \
-/bin/chmod +x /usr/bin/droid/android-misc.sh || :\
-%{nil}
-
 %include rpm/dhd/droid-hal-device.inc
