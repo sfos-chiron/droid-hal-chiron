@@ -149,24 +149,24 @@ if [ "$BUILDMW" == "1" ]; then
     pushd $ANDROID_ROOT/hybris/mw > /dev/null
 
     if [ "$BUILDMW_REPO" == "" ]; then
-        buildmw -u "https://github.com/mer-hybris/libhybris" || die
+        buildmw -u "https://github.com/mer-hybris/libhybris.git" || die
 
         if [ $android_version_major -ge 8 ]; then
             buildmw -u "https://git.merproject.org/mer-core/libglibutil.git" || die
-            buildmw -u "https://github.com/mer-hybris/libgbinder" || die
-            buildmw -u "https://github.com/mer-hybris/libgbinder-radio" || die
-            buildmw -u "https://github.com/mer-hybris/bluebinder" || die
-            buildmw -u "https://github.com/mer-hybris/ofono-ril-binder-plugin" || die
-            buildmw -u "https://github.com/mer-hybris/nfcd-binder-plugin" || die
+            buildmw -u "https://github.com/mer-hybris/libgbinder.git" || die
+            buildmw -u "https://github.com/mer-hybris/libgbinder-radio.git" || die
+            buildmw -u "https://github.com/mer-hybris/bluebinder.git" || die
+            buildmw -u "https://github.com/sailfishos-oneplus5/ofono-ril-binder-plugin.git" || die # >=1.0.7
+            buildmw -u "https://github.com/sailfishos-oneplus5/nfcd-binder-plugin.git" || die # >=1.0.4
         fi
         buildmw -u "https://github.com/mer-hybris/pulseaudio-modules-droid.git" \
                 -s rpm/pulseaudio-modules-droid.spec || die
         buildmw -u "https://github.com/nemomobile/mce-plugin-libhybris.git" || die
-        buildmw -u "https://github.com/mer-hybris/ngfd-plugin-droid-vibrator" \
+        buildmw -u "https://github.com/mer-hybris/ngfd-plugin-droid-vibrator.git" \
                 -s rpm/ngfd-plugin-native-vibrator.spec || die
-        buildmw -u "https://github.com/mer-hybris/qt5-feedback-haptics-droid-vibrator" \
+        buildmw -u "https://github.com/mer-hybris/qt5-feedback-haptics-droid-vibrator.git" \
                 -s rpm/qt5-feedback-haptics-native-vibrator.spec || die
-        buildmw -u "https://github.com/mer-hybris/qt5-qpa-hwcomposer-plugin" || die
+        buildmw -u "https://github.com/mer-hybris/qt5-qpa-hwcomposer-plugin.git" || die
         buildmw -u "https://git.merproject.org/mer-core/qtscenegraph-adaptation.git" \
                 -s rpm/qtscenegraph-adaptation-droid.spec || die
         if [ $android_version_major -ge 9 ]; then
@@ -177,21 +177,17 @@ if [ "$BUILDMW" == "1" ]; then
                     -s rpm/sensorfw-qt5-hybris.spec || die
         fi
         if [ $android_version_major -ge 8 ]; then
-            buildmw -u "https://github.com/mer-hybris/geoclue-providers-hybris" \
+            buildmw -u "https://github.com/sailfishos-oneplus5/pulseaudio-modules-droid-hidl.git" || die # >=1.0
+            buildmw -u "https://github.com/mer-hybris/geoclue-providers-hybris.git" \
                     -s rpm/geoclue-providers-hybris-binder.spec || die
         else
-            buildmw -u "https://github.com/mer-hybris/geoclue-providers-hybris" \
+            buildmw -u "https://github.com/mer-hybris/geoclue-providers-hybris.git" \
                     -s rpm/geoclue-providers-hybris.spec || die
         fi
-        # build kf5bluezqt-bluez4 if not yet provided by Sailfish OS itself
-        sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper se kf5bluezqt-bluez4 > /dev/null
-        ret=$?
-        if [ $ret -eq 104 ]; then
-            buildmw -u "https://git.merproject.org/mer-core/kf5bluezqt.git" \
-                    -s rpm/kf5bluezqt-bluez4.spec || die
-            # pull device's bluez4 configs correctly
-            sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper remove bluez-configs-mer
-        fi
+        buildmw -u "https://github.com/sailfishos-oneplus5/triambience.git" || die
+        buildmw -u "https://github.com/kimmoli/onyx-triambience-settings-plugin.git" || die
+        # get bluez5 & droid-config stuff setup during initial run
+        [ ! -f "$ANDROID_ROOT/.first_build_done" ] && sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper -n in bluez5-obexd droid-config-$DEVICE droid-config-$DEVICE-bluez5 kf5bluezqt-bluez5 libcommhistory-qt5 libcontacts-qt5 libical obex-capability obexd-calldata-provider obexd-contentfilter-helper qt5-qtpim-versit qtcontacts-sqlite-qt5
     else
         if [[ -z "$BUILDSPEC_FILE" ]]; then
             buildmw -u $BUILDMW_REPO || die
@@ -205,6 +201,10 @@ fi
 
 if [ "$BUILDVERSION" == "1" ]; then
     buildversion
+    if [ ! -f "$ANDROID_ROOT/.first_build_done" ]; then
+        type gen_ks &> /dev/null && gen_ks
+        touch "$ANDROID_ROOT/.first_build_done"
+    fi
     echo "----------------------DONE! Now proceed on creating the rootfs------------------"
 fi
 
@@ -215,4 +215,3 @@ if [ "$BUILDPKG" == "1" ]; then
         buildpkg $BUILDPKG_PATH ${BUILDSPEC_FILE[@]}
     fi
 fi
-
