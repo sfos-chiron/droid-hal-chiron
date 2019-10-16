@@ -187,7 +187,7 @@ if [ "$BUILDMW" == "1" ]; then
         buildmw -u "https://github.com/sailfishos-oneplus5/triambience.git" || die
         buildmw -u "https://github.com/kimmoli/onyx-triambience-settings-plugin.git" || die
         # get bluez5 & droid-config stuff setup during initial run
-        [ ! -f "$ANDROID_ROOT/.first_build_done" ] && sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper -n in bluez5-obexd droid-config-$DEVICE droid-config-$DEVICE-bluez5 kf5bluezqt-bluez5 libcommhistory-qt5 libcontacts-qt5 libical obex-capability obexd-calldata-provider obexd-contentfilter-helper qt5-qtpim-versit qtcontacts-sqlite-qt5
+        [ ! -f "$ANDROID_ROOT/.first_${DEVICE}_build_done" ] && sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper -n in bluez5-obexd droid-config-$DEVICE droid-config-$DEVICE-bluez5 kf5bluezqt-bluez5 libcommhistory-qt5 libcontacts-qt5 libical obex-capability obexd-calldata-provider obexd-contentfilter-helper qt5-qtpim-versit qtcontacts-sqlite-qt5
     else
         if [[ -z "$BUILDSPEC_FILE" ]]; then
             buildmw -u $BUILDMW_REPO || die
@@ -201,9 +201,9 @@ fi
 
 if [ "$BUILDVERSION" == "1" ]; then
     buildversion
-    if [ ! -f "$ANDROID_ROOT/.first_build_done" ]; then
+    if [ ! -f "$ANDROID_ROOT/.first_${DEVICE}_build_done" ]; then
         type gen_ks &> /dev/null && gen_ks
-        touch "$ANDROID_ROOT/.first_build_done"
+        touch "$ANDROID_ROOT/.first_${DEVICE}_build_done"
     fi
     echo "----------------------DONE! Now proceed on creating the rootfs------------------"
 fi
