@@ -14,4 +14,11 @@
   #define WANT_ADRENO_QUIRKS 1 \
 %{nil}
 
+%define straggler_files \
+  /bt_firmware \
+  /dsp \
+  /firmware \
+  /persist \
+%{nil}
+
 %include rpm/dhd/droid-hal-device.inc
