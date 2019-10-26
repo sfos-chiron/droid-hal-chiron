@@ -234,9 +234,8 @@ if [ "$BUILDMW" = "1" ]; then
         buildmw -u "https://git.sailfishos.org/mer-core/qtscenegraph-adaptation.git" \
                 -s rpm/qtscenegraph-adaptation-droid.spec || die
         if [ $android_version_major -ge 9 ]; then
-            # The following two packages are required for call audio on QCOM devices
+            # The following package is required for call audio on QCOM devices
             buildmw -u "https://github.com/mer-hybris/pulseaudio-modules-droid-hidl" || die
-            buildmw -u "https://github.com/mer-hybris/audiosystem-passthrough" || die
             buildmw -u "https://git.sailfishos.org/mer-core/sensorfw.git" \
                     -s rpm/sensorfw-qt5-binder.spec || die
         else
