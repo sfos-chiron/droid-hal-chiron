@@ -219,8 +219,9 @@ if [ "$BUILDMW" = "1" ]; then
             buildmw -u "https://github.com/mer-hybris/libgbinder" || die
             buildmw -u "https://github.com/mer-hybris/libgbinder-radio" || die
             buildmw -u "https://github.com/mer-hybris/bluebinder" || die
-            buildmw -u "https://github.com/mer-hybris/ofono-ril-binder-plugin" || die
-            buildmw -u "https://github.com/mer-hybris/nfcd-binder-plugin" || die
+            # The following two packages are pre-downgraded to match the latest SFOS release to avoid build issues
+            buildmw -u "https://github.com/sailfishos-oneplus5/ofono-ril-binder-plugin" || die
+            buildmw -u "https://github.com/sailfishos-oneplus5/nfcd-binder-plugin" || die
         fi
         buildmw -u "https://github.com/mer-hybris/pulseaudio-modules-droid.git" \
                 -s rpm/pulseaudio-modules-droid.spec || die
@@ -233,6 +234,9 @@ if [ "$BUILDMW" = "1" ]; then
         buildmw -u "https://git.sailfishos.org/mer-core/qtscenegraph-adaptation.git" \
                 -s rpm/qtscenegraph-adaptation-droid.spec || die
         if [ $android_version_major -ge 9 ]; then
+            # The following two packages are required for call audio on QCOM devices
+            buildmw -u "https://github.com/mer-hybris/pulseaudio-modules-droid-hidl" || die
+            buildmw -u "https://github.com/mer-hybris/audiosystem-passthrough" || die
             buildmw -u "https://git.sailfishos.org/mer-core/sensorfw.git" \
                     -s rpm/sensorfw-qt5-binder.spec || die
         else
@@ -246,21 +250,21 @@ if [ "$BUILDMW" = "1" ]; then
             buildmw -u "https://github.com/mer-hybris/geoclue-providers-hybris" \
                     -s rpm/geoclue-providers-hybris.spec || die
         fi
-        # build kf5bluezqt-bluez4 if not yet provided by Sailfish OS itself
-        sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper se kf5bluezqt-bluez4 > /dev/null
-        ret=$?
-        if [ $ret -eq 104 ]; then
-            buildmw -u "https://git.sailfishos.org/mer-core/kf5bluezqt.git" \
-                    -s rpm/kf5bluezqt-bluez4.spec || die
-            # pull device's bluez4 configs correctly
-            sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper remove bluez-configs-mer
-        fi
+        # Additional middleware for extra functionality on the OnePlus 5(T) devices
+        buildmw -u "https://github.com/sailfishos-oneplus5/triambience.git" || die
+        buildmw -u "https://github.com/kimmoli/onyx-triambience-settings-plugin.git" || die
+        # Setup bluez5 & droid-config packages properly during initial build_packages run
+        [ ! -f "$ANDROID_ROOT/.first_${DEVICE}_build_done" ] && sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper -n in bluez5-obexd droid-config-$DEVICE droid-config-$DEVICE-bluez5 kf5bluezqt-bluez5 libcommhistory-qt5 libcontacts-qt5 libical obex-capability obexd-calldata-provider obexd-contentfilter-helper qt5-qtpim-versit qtcontacts-sqlite-qt5
     fi
     popd > /dev/null
 fi
 
 if [ "$BUILDVERSION" = "1" ]; then
     buildversion
+    if [ ! -f "$ANDROID_ROOT/.first_${DEVICE}_build_done" ]; then
+        type gen_ks &> /dev/null && gen_ks
+        touch "$ANDROID_ROOT/.first_${DEVICE}_build_done"
+    fi
     echo "----------------------DONE! Now proceed on creating the rootfs------------------"
 fi
 
