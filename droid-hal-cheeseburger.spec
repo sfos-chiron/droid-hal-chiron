@@ -6,7 +6,6 @@
 %define vendor_pretty OnePlus
 %define device_pretty OnePlus 5
 
-%define installable_zip 1
 %define droid_target_aarch64 1
 %define enable_kernel_update 1
 
@@ -21,6 +20,6 @@
   /persist \
 %{nil}
 
-%define makefstab_skip_entries /sys/fs/pstore
+%define makefstab_skip_entries /sys/fs/pstore /dev/mtp
 
 %include rpm/dhd/droid-hal-device.inc
