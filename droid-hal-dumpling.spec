@@ -1,10 +1,10 @@
 # Reference: dhd/droid-hal-device.inc
 
 %define vendor oneplus
-%define device cheeseburger
+%define device dumpling
 
 %define vendor_pretty OnePlus
-%define device_pretty OnePlus 5
+%define device_pretty OnePlus 5T
 
 %define droid_target_aarch64 1
 %define enable_kernel_update 1
