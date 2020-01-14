@@ -22,6 +22,6 @@
   /vendor \
 %{nil}
 
-%define makefstab_skip_entries /sys/fs/pstore
+%define makefstab_skip_entries /dev/cpuctl /dev/stune /sys/fs/pstore
 
 %include rpm/dhd/droid-hal-device.inc
