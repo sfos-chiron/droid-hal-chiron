@@ -1,4 +1,4 @@
 [submodule "dhd"]
 	path = dhd
 	url = https://github.com/sailfishos-oneplus5/droid-hal-device
-	branch = hybris-15.1
+	branch = upgrade-3.2.1
